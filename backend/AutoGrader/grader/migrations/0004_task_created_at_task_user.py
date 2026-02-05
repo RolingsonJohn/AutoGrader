@@ -9,19 +9,25 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('grader', '0003_task_exercise_file_task_prog_lang_task_rubric_file_and_more'),
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('grader',
+         '0003_task_exercise_file_task_prog_lang_task_rubric_file_and_more'),
+        migrations.swappable_dependency(
+            settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AddField(
             model_name='task',
             name='created_at',
-            field=models.DateTimeField(default=django.utils.timezone.now),
+            field=models.DateTimeField(
+                default=django.utils.timezone.now),
         ),
         migrations.AddField(
             model_name='task',
             name='user',
-            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(
+                default=None,
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL),
         ),
     ]

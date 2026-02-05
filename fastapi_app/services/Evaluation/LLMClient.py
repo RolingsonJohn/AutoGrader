@@ -7,13 +7,16 @@ import google.generativeai as genai
 from services.Config import Config as config
 from google.generativeai.types import GenerationConfig
 
+
 class NonSuportedMode(Exception):
     """
         Excepción en caso de no utilizar
         un modelo soportado por la app.
     """
+
     def __init__(self, *args):
         super().__init__(*args)
+
 
 class LLMClient:
 
@@ -22,7 +25,7 @@ class LLMClient:
         los LLM.
     """
 
-    def __init__(self, exe_mode: str = config.EXE_METHOD, 
+    def __init__(self, exe_mode: str = config.EXE_METHOD,
                  system_context: str = "",
                  model: str = config.OLLAMA_MODEL):
         """
@@ -32,7 +35,7 @@ class LLMClient:
                 - systema_context (str): Plantilla de configuración del modelo para dotarlo de un contexto.
                 - model (str): Modelo de LLM que se utilizará para la evaluación del código.
         """
-        
+
         self.exe_mode = exe_mode
         self.system_context = system_context
 
@@ -40,7 +43,8 @@ class LLMClient:
             case "google":
                 self.model = model
                 genai.configure(api_key=config.API_KEY_GOOGLE)
-                self.client = genai.GenerativeModel(self.model, system_instruction=self.system_context)
+                self.client = genai.GenerativeModel(
+                    self.model, system_instruction=self.system_context)
             case "ollama":
                 self.model = model
                 self.client = None
@@ -62,7 +66,7 @@ class LLMClient:
         try:
             match self.exe_mode:
                 case "google":
-                    
+
                     schema = json.dumps(structure.model_json_schema())
 
                     prompt = f"""{prompt}
@@ -80,10 +84,12 @@ The response must follow the JSON schema bellow:
                         contents=[prompt],
                         generation_config=generation_config,
                     )
-                    
-                    response = re.sub(r"```(?:json)?\n?", "", response.text).strip()
+
+                    response = re.sub(
+                        r"```(?:json)?\n?", "", response.text).strip()
                     response = re.sub(r"\n?```", "", response).strip()
-                    response = structure.model_validate_json(response).model_dump()
+                    response = structure.model_validate_json(
+                        response).model_dump()
 
                 case "ollama":
                     print("Evaluando en el cliente")
@@ -98,7 +104,8 @@ The response must follow the JSON schema bellow:
                         options={'temperature': 0},
                     )
 
-                    response = structure.model_validate_json(response.message.content).model_dump()
+                    response = structure.model_validate_json(
+                        response.message.content).model_dump()
 
                 case "groq":
 
@@ -131,12 +138,15 @@ The response must follow the JSON schema bellow:
                     content = re.sub(r"```(?:json)?\n?", "", content).strip()
                     content = re.sub(r"\n?```", "", content).strip()
 
-                    response = structure.model_validate_json(content).model_dump()
-                    print(f"------------------------\n{response}\n-----------------------")
+                    response = structure.model_validate_json(
+                        content).model_dump()
+                    print(
+                        f"------------------------\n{response}\n-----------------------")
 
                 case _:
-                    raise NonSuportedMode("Execution mode non suported during chat")
-                
+                    raise NonSuportedMode(
+                        "Execution mode non suported during chat")
+
         except Exception as e:
             print(f"LLM error {e}")
             return None

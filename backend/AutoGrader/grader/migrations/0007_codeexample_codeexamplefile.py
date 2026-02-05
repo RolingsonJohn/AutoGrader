@@ -9,8 +9,10 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('grader', '0006_remove_task_state_task_error_message_task_status_and_more'),
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
+        ('grader',
+         '0006_remove_task_state_task_error_message_task_status_and_more'),
+        migrations.swappable_dependency(
+            settings.AUTH_USER_MODEL),
     ]
 
     operations = [

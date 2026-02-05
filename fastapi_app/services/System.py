@@ -16,6 +16,7 @@ from services.PostEvaluation.MailSender import MailSender
 
 BASE_DIR = Path(__file__).resolve().parent
 
+
 class System:
     _instance = None
 
@@ -38,9 +39,10 @@ class System:
             cls._instance.prompt = ""
             cls._instance.system_config = ""
             cls._instance.rubrics = None
-            cls._instance.rag = Rag(collection_name=theme, chroma_path=f"{BASE_DIR}/resources")
+            cls._instance.rag = Rag(
+                collection_name=theme,
+                chroma_path=f"{BASE_DIR}/resources")
         return cls._instance
-
 
     def data_extraction(self) -> tuple:
         # --- Carga de datos ---
@@ -81,7 +83,7 @@ class System:
                 emb = classifier.get_embedding(clean_code)
                 features = [
                     classifier.euclidean_distance(ref_embedding, emb),
-                    #classifier.manhattan_distance(ref_embedding, emb),
+                    # classifier.manhattan_distance(ref_embedding, emb),
                     classifier.cosine_similitude(ref_embedding, emb)
                 ]
 
@@ -90,7 +92,6 @@ class System:
                     scripts[file] = clean_code
 
         return scripts
-
 
     def evaluation(self, scripts: dict):
         # --- Evaluation ---
@@ -112,16 +113,16 @@ class System:
             all_results.append({
                 "filename": res.get("name"),
                 "grade": res.get("grade"),
-                "refine_grade" : res.get("refine_grade"),
-                "feedback" : res.get("error_feedback"),
-                "refine_feedback" : res.get("refine_feedback"),
+                "refine_grade": res.get("refine_grade"),
+                "feedback": res.get("error_feedback"),
+                "refine_feedback": res.get("refine_feedback"),
             })
 
         return all_results
-    
+
     def postevaluation(self, results, to_email: str):
         # --- Post-Evaluation ---
-        
+
         grades = [ev.get("grade") for ev in results]
         feedbacks = [ev.get("error_feedback") for ev in results]
         filenames = [ev.get("name") for ev in results]
@@ -129,12 +130,15 @@ class System:
         sender = MailSender(endpoint=ENDPOINT, token=self.token)
         attchs = []
         for filename, grade, fb in zip(filenames, grades, feedbacks):
-            print(f"--------------------------------\nFichero {filename}\nCalificación {grade}")
+            print(
+                f"--------------------------------\nFichero {filename}\nCalificación {grade}")
 
             try:
                 for topic, feedback in fb.items():
                     print(f"\t{topic}\n\t{feedback}")
-                    attchs.append(sender.create_attachment(feedback, f"{topic}.md"))
+                    attchs.append(
+                        sender.create_attachment(
+                            feedback, f"{topic}.md"))
             except Exception:
                 print("Error adjuntando ficheros")
 
@@ -145,13 +149,10 @@ class System:
             subject="Corrección",
             body="Adjunto se encuentra un fichero con el feedback de su código",
             attch=attchs,
-            to_email=to_email
-        )
-    
+            to_email=to_email)
+
     def sandbox_execution(self):
         sandbox = Sandbox(prog_lan=self.prog_lang)
         sandbox.build_image()
         sandbox.create_container()
         sandbox.run_container()
-
-    

@@ -2,6 +2,8 @@
 Test fixtures and configuration for pytest.
 """
 
+from services.Config.settings import Settings
+from main import app
 import pytest
 import asyncio
 from fastapi.testclient import TestClient
@@ -10,9 +12,6 @@ import sys
 
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
-
-from main import app
-from services.Config.settings import Settings
 
 
 @pytest.fixture(scope="session")

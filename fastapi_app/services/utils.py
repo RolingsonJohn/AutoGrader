@@ -27,7 +27,7 @@ class CircuitBreaker:
     Circuit breaker pattern implementation for fault tolerance.
     Prevents cascading failures by monitoring and limiting requests.
     """
-    
+
     def __init__(
         self,
         failure_threshold: int = 5,
@@ -40,19 +40,19 @@ class CircuitBreaker:
         self.failure_count = 0
         self.last_failure_time = None
         self.state = CircuitBreakerState.CLOSED
-    
+
     def call(self, func: Callable, *args, **kwargs) -> Any:
         """
         Execute function with circuit breaker protection.
-        
+
         Args:
             func: Function to execute
             *args: Positional arguments
             **kwargs: Keyword arguments
-        
+
         Returns:
             Function result
-        
+
         Raises:
             Exception: Circuit open or underlying error
         """
@@ -62,7 +62,7 @@ class CircuitBreaker:
                 logger.info("Circuit breaker entering HALF_OPEN state")
             else:
                 raise Exception("Circuit breaker is OPEN")
-        
+
         try:
             result = func(*args, **kwargs)
             if self.state == CircuitBreakerState.HALF_OPEN:
@@ -73,11 +73,13 @@ class CircuitBreaker:
         except self.expected_exception as e:
             self.failure_count += 1
             self.last_failure_time = time.time()
-            
+
             if self.failure_count >= self.failure_threshold:
                 self.state = CircuitBreakerState.OPEN
-                logger.error(f"Circuit breaker opened after {self.failure_count} failures")
-            
+                logger.error(
+                    f"Circuit breaker opened after {
+                        self.failure_count} failures")
+
             raise
 
 
@@ -88,12 +90,12 @@ def retry_with_backoff(
 ) -> Callable:
     """
     Decorator for retrying functions with exponential backoff.
-    
+
     Args:
         max_retries: Maximum number of retry attempts
         backoff_factor: Multiplier for backoff delay
         exceptions: Tuple of exceptions to catch
-    
+
     Returns:
         Decorated function
     """
@@ -105,16 +107,18 @@ def retry_with_backoff(
                     return await func(*args, **kwargs)
                 except exceptions as e:
                     if attempt == max_retries - 1:
-                        logger.error(f"Function {func.__name__} failed after {max_retries} attempts")
+                        logger.error(
+                            f"Function {
+                                func.__name__} failed after {max_retries} attempts")
                         raise
-                    
+
                     delay = backoff_factor * (2 ** attempt)
                     logger.warning(
                         f"Attempt {attempt + 1} failed for {func.__name__}, "
                         f"retrying in {delay}s: {str(e)}"
                     )
                     await asyncio.sleep(delay)
-        
+
         @wraps(func)
         def sync_wrapper(*args, **kwargs):
             for attempt in range(max_retries):
@@ -122,24 +126,27 @@ def retry_with_backoff(
                     return func(*args, **kwargs)
                 except exceptions as e:
                     if attempt == max_retries - 1:
-                        logger.error(f"Function {func.__name__} failed after {max_retries} attempts")
+                        logger.error(
+                            f"Function {
+                                func.__name__} failed after {max_retries} attempts")
                         raise
-                    
+
                     delay = backoff_factor * (2 ** attempt)
                     logger.warning(
                         f"Attempt {attempt + 1} failed for {func.__name__}, "
                         f"retrying in {delay}s: {str(e)}"
                     )
                     time.sleep(delay)
-        
-        return async_wrapper if asyncio.iscoroutinefunction(func) else sync_wrapper
-    
+
+        return async_wrapper if asyncio.iscoroutinefunction(
+            func) else sync_wrapper
+
     return decorator
 
 
 class HealthChecker:
     """Health checking utility for service dependencies."""
-    
+
     @staticmethod
     async def check_service(
         url: str,
@@ -148,17 +155,17 @@ class HealthChecker:
     ) -> dict:
         """
         Check health of a service endpoint.
-        
+
         Args:
             url: Service URL to check
             timeout: Request timeout in seconds
             expected_status: Expected HTTP status
-        
+
         Returns:
             Health check result
         """
         import aiohttp
-        
+
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.get(url, timeout=timeout) as resp:
@@ -185,7 +192,7 @@ class HealthChecker:
                 "error": str(e),
                 "timestamp": time.time()
             }
-    
+
     @staticmethod
     async def check_multiple(
         services: dict[str, str],
@@ -193,11 +200,11 @@ class HealthChecker:
     ) -> dict[str, dict]:
         """
         Check health of multiple services concurrently.
-        
+
         Args:
             services: Dict mapping service names to URLs
             timeout: Request timeout in seconds
-        
+
         Returns:
             Health check results for all services
         """
@@ -206,7 +213,7 @@ class HealthChecker:
             for url in services.values()
         ]
         results = await asyncio.gather(*tasks, return_exceptions=True)
-        
+
         return {
             name: result
             for name, result in zip(services.keys(), results)

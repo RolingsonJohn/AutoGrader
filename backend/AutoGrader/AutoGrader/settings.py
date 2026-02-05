@@ -26,7 +26,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # Load from .env file
-SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-b6prnrf!_s4k+m6tiw1(9q()tvjis%4!yi@ia$blkw+zv&#*8i')
+SECRET_KEY = os.getenv(
+    'DJANGO_SECRET_KEY',
+    'django-insecure-b6prnrf!_s4k+m6tiw1(9q()tvjis%4!yi@ia$blkw+zv&#*8i')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('FASTAPI_DEBUG', 'False').lower() == 'true'
@@ -48,7 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     'allauth',
     'allauth.account',
-    'allauth.socialaccount', 
+    'allauth.socialaccount',
     'allauth.socialaccount.providers.microsoft',
     'grader'
 ]

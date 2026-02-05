@@ -14,10 +14,23 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='TaskResult',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('data', models.JSONField(help_text='JSON con los datos de resultado del procesamiento')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('task', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='results', to='grader.task')),
+                ('id',
+                 models.BigAutoField(
+                     auto_created=True,
+                     primary_key=True,
+                     serialize=False,
+                     verbose_name='ID')),
+                ('data',
+                 models.JSONField(
+                     help_text='JSON con los datos de resultado del procesamiento')),
+                ('created_at',
+                 models.DateTimeField(
+                     auto_now_add=True)),
+                ('task',
+                 models.ForeignKey(
+                     on_delete=django.db.models.deletion.CASCADE,
+                     related_name='results',
+                     to='grader.task')),
             ],
             options={
                 'ordering': ['created_at'],

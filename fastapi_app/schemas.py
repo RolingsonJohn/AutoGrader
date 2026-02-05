@@ -10,10 +10,11 @@ from datetime import datetime
 
 class PopulateRagRequest(BaseModel):
     """Request model for RAG population."""
-    
+
     theme: str = Field(..., min_length=1, description="Theme name")
-    examples: List[Dict[str, Any]] = Field(default=[], description="Examples to populate")
-    
+    examples: List[Dict[str, Any]] = Field(
+        default=[], description="Examples to populate")
+
     class Config:
         json_schema_extra = {
             "example": {
@@ -28,11 +29,12 @@ class PopulateRagRequest(BaseModel):
 
 class DeleteRagRequest(BaseModel):
     """Request model for RAG deletion."""
-    
+
     task_id: int = Field(..., gt=0, description="Task ID")
     theme: str = Field(..., min_length=1, description="Theme name")
-    prog_lang: str = Field(..., min_length=1, description="Programming language")
-    
+    prog_lang: str = Field(..., min_length=1,
+                           description="Programming language")
+
     @field_validator('prog_lang')
     @classmethod
     def validate_prog_lang(cls, v: str) -> str:
@@ -40,7 +42,7 @@ class DeleteRagRequest(BaseModel):
         if v.lower() not in allowed:
             raise ValueError(f"Programming language must be one of {allowed}")
         return v.lower()
-    
+
     class Config:
         json_schema_extra = {
             "example": {
@@ -53,14 +55,16 @@ class DeleteRagRequest(BaseModel):
 
 class EvaluateRequest(BaseModel):
     """Request model for code evaluation."""
-    
+
     task_id: int = Field(..., gt=0, description="Task ID")
     theme: str = Field(..., min_length=1, description="Theme name")
-    prog_lang: str = Field(..., min_length=1, description="Programming language")
-    model: str = Field(..., min_length=1, description="Model to use for evaluation")
+    prog_lang: str = Field(..., min_length=1,
+                           description="Programming language")
+    model: str = Field(..., min_length=1,
+                       description="Model to use for evaluation")
     agent: str = Field(..., min_length=1, description="Agent name")
     api_key: str = Field(..., description="API key for authentication")
-    
+
     class Config:
         json_schema_extra = {
             "example": {
@@ -76,11 +80,13 @@ class EvaluateRequest(BaseModel):
 
 class SuccessResponse(BaseModel):
     """Generic success response."""
-    
+
     message: str = Field(..., description="Success message")
     data: Optional[Dict[str, Any]] = Field(None, description="Response data")
-    timestamp: datetime = Field(default_factory=datetime.utcnow, description="Response timestamp")
-    
+    timestamp: datetime = Field(
+        default_factory=datetime.utcnow,
+        description="Response timestamp")
+
     class Config:
         json_schema_extra = {
             "example": {
@@ -93,12 +99,15 @@ class SuccessResponse(BaseModel):
 
 class ErrorResponse(BaseModel):
     """Generic error response."""
-    
+
     error: str = Field(..., description="Error type")
     message: str = Field(..., description="Error message")
-    details: Optional[Dict[str, Any]] = Field(None, description="Additional error details")
-    timestamp: datetime = Field(default_factory=datetime.utcnow, description="Error timestamp")
-    
+    details: Optional[Dict[str, Any]] = Field(
+        None, description="Additional error details")
+    timestamp: datetime = Field(
+        default_factory=datetime.utcnow,
+        description="Error timestamp")
+
     class Config:
         json_schema_extra = {
             "example": {
@@ -112,12 +121,15 @@ class ErrorResponse(BaseModel):
 
 class HealthCheckResponse(BaseModel):
     """Health check response."""
-    
+
     status: str = Field(..., description="Service status")
     version: str = Field(..., description="API version")
-    timestamp: datetime = Field(default_factory=datetime.utcnow, description="Check timestamp")
-    services: Optional[Dict[str, Dict[str, Any]]] = Field(None, description="Service health status")
-    
+    timestamp: datetime = Field(
+        default_factory=datetime.utcnow,
+        description="Check timestamp")
+    services: Optional[Dict[str, Dict[str, Any]]] = Field(
+        None, description="Service health status")
+
     class Config:
         json_schema_extra = {
             "example": {

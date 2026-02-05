@@ -5,16 +5,19 @@ from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 from grader.models import Task, TaskResult, CodeExample, LLMAgent, LLMModel, CodeExampleFile
 
+
 @override_settings(MEDIA_ROOT='/tmp/django_test_media')
 class GraderTests(TestCase):
     def setUp(self):
         self.client = Client()
         self.username = 'testuser'
         self.password = 'pass1234'
-        self.user = User.objects.create_user(username=self.username, password=self.password)
-        self.agent = LLMAgent.objects.create(name='test-agent', api_key='dummy')
-        self.model = LLMModel.objects.create(name='test-model', agent=self.agent)
-
+        self.user = User.objects.create_user(
+            username=self.username, password=self.password)
+        self.agent = LLMAgent.objects.create(
+            name='test-agent', api_key='dummy')
+        self.model = LLMModel.objects.create(
+            name='test-model', agent=self.agent)
 
     def test_login_logout(self):
         # Primero: sin login acceder a tasks redirige a login
@@ -23,14 +26,16 @@ class GraderTests(TestCase):
         login_url = reverse('account_login')
         self.assertTrue(response['Location'].startswith(login_url))
         # Ahora login
-        login = self.client.login(username=self.username, password=self.password)
+        login = self.client.login(
+            username=self.username,
+            password=self.password)
         self.assertTrue(login)
 
         print(self.client)
         # Con sesión activa, acceder a tasks debe devolver 200
         response = self.client.get(reverse('tasks'))
         self.assertEqual(response.status_code, 200)
-        
+
         # Logout usando GET (Allauth permite GET de logout)
         response = self.client.get(reverse('account_logout'))
         self.assertEqual(response.status_code, 200)
@@ -40,7 +45,6 @@ class GraderTests(TestCase):
         response = self.client.get(reverse('tasks'))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'login')
-
 
     def test_registration_view(self):
         url = reverse('account_signup')
@@ -55,14 +59,17 @@ class GraderTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(User.objects.filter(username='newuser').exists())
 
-
     def test_create_task_and_delete(self):
         # Login
         self.client.login(username=self.username, password=self.password)
         # Crear tarea
         url_create = reverse('task-create')
-        rubric = SimpleUploadedFile('rubric.json', b'{}', content_type='application/json')
-        exercise = SimpleUploadedFile('exercise.zip', b'PK\x03\x04', content_type='application/zip')
+        rubric = SimpleUploadedFile(
+            'rubric.json', b'{}', content_type='application/json')
+        exercise = SimpleUploadedFile(
+            'exercise.zip',
+            b'PK\x03\x04',
+            content_type='application/zip')
         data = {
             'theme': 'Tema prueba',
             'prog_lang': 'Python',
@@ -77,7 +84,8 @@ class GraderTests(TestCase):
         # Simular tarea procesada y resultado
         task.state = True
         task.save()
-        TaskResult.objects.create(task=task, data=[{'filename': 'f.py', 'grade': 10}])
+        TaskResult.objects.create(
+            task=task, data=[{'filename': 'f.py', 'grade': 10}])
 
         # Borrar ejemplo
         url_del = reverse('delete_task', args=[task.id])
@@ -85,14 +93,17 @@ class GraderTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertFalse(CodeExample.objects.filter(id=task.id).exists())
 
-
     def test_create_task_and_download_csv(self):
         # Login
         self.client.login(username=self.username, password=self.password)
         # Crear tarea
         url_create = reverse('task-create')
-        rubric = SimpleUploadedFile('rubric.json', b'{}', content_type='application/json')
-        exercise = SimpleUploadedFile('exercise.zip', b'PK\x03\x04', content_type='application/zip')
+        rubric = SimpleUploadedFile(
+            'rubric.json', b'{}', content_type='application/json')
+        exercise = SimpleUploadedFile(
+            'exercise.zip',
+            b'PK\x03\x04',
+            content_type='application/zip')
         data = {
             'theme': 'Tema prueba',
             'prog_lang': 'Python',
@@ -107,7 +118,8 @@ class GraderTests(TestCase):
         # Simular tarea procesada y resultado
         task.state = True
         task.save()
-        TaskResult.objects.create(task=task, data=[{'filename': 'f.py', 'grade': 10}])
+        TaskResult.objects.create(
+            task=task, data=[{'filename': 'f.py', 'grade': 10}])
 
         # Descargar CSV
         url_csv = reverse('download_task_csv', args=[task.id])
@@ -118,14 +130,17 @@ class GraderTests(TestCase):
         self.assertIn('filename,grade', content)
         self.assertIn('f.py,10', content)
 
-
     def test_code_example_upload_and_delete(self):
         # Login
         self.client.login(username=self.username, password=self.password)
         # Subir ejemplos
         url_create = reverse('example-create')
-        code1 = SimpleUploadedFile('a.py', b'print(1)', content_type='text/x-python')
-        code2 = SimpleUploadedFile('b.c', b'int main() { return 0; }', content_type='text/x-c')
+        code1 = SimpleUploadedFile(
+            'a.py', b'print(1)', content_type='text/x-python')
+        code2 = SimpleUploadedFile(
+            'b.c',
+            b'int main() { return 0; }',
+            content_type='text/x-c')
         # Para Django Test Client, los files van dentro de data
         data = {
             'theme': 'Ejemplo Test',
@@ -145,7 +160,6 @@ class GraderTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertFalse(CodeExample.objects.filter(id=example.id).exists())
 
-
     def test_csrf_protection_on_task_create(self):
         # Usar cliente con verificación de CSRF
         csrf_client = Client(enforce_csrf_checks=True)
@@ -160,7 +174,6 @@ class GraderTests(TestCase):
         response = csrf_client.post(url, data)
         self.assertEqual(response.status_code, 403)
 
-
     def test_xss_prevention_in_example_detail(self):
         # Login
         self.client.login(username=self.username, password=self.password)
@@ -171,7 +184,10 @@ class GraderTests(TestCase):
             prog_lang='Python'
         )
         xss_content = b"<script>alert('xss')</script>"
-        f = SimpleUploadedFile('xss.py', xss_content, content_type='text/x-python')
+        f = SimpleUploadedFile(
+            'xss.py',
+            xss_content,
+            content_type='text/x-python')
         CodeExampleFile.objects.create(example=example, file=f)
 
         url = reverse('example-detail', args=[example.id])
@@ -181,4 +197,6 @@ class GraderTests(TestCase):
         self.assertNotContains(response, "<script>alert('xss')</script>")
         # Debe contener la versión escapada
         # Verificar la versión escapada con comillas simples como &#x27;
-        self.assertContains(response, "&lt;script&gt;alert(&#x27;xss&#x27;)&lt;/script&gt;")
+        self.assertContains(
+            response,
+            "&lt;script&gt;alert(&#x27;xss&#x27;)&lt;/script&gt;")

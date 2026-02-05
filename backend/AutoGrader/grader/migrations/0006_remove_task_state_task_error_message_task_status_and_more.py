@@ -20,31 +20,47 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='task',
             name='error_message',
-            field=models.TextField(blank=True, null=True),
+            field=models.TextField(
+                blank=True,
+                null=True),
         ),
         migrations.AddField(
             model_name='task',
             name='status',
-            field=models.CharField(choices=[('PENDING', 'En proceso'), ('SUCCESS', 'Completado'), ('ERROR', 'Error')], default='PENDING', max_length=10),
+            field=models.CharField(
+                choices=[
+                    ('PENDING',
+                     'En proceso'),
+                    ('SUCCESS',
+                     'Completado'),
+                    ('ERROR',
+                     'Error')],
+                default='PENDING',
+                max_length=10),
         ),
         migrations.AlterField(
             model_name='task',
             name='exercise_file',
-            field=models.FileField(upload_to='exercises/'),
+            field=models.FileField(
+                upload_to='exercises/'),
         ),
         migrations.AlterField(
             model_name='task',
             name='rubric_file',
-            field=models.FileField(upload_to='rubrics/'),
+            field=models.FileField(
+                upload_to='rubrics/'),
         ),
         migrations.AlterField(
             model_name='task',
             name='theme',
-            field=models.CharField(max_length=200),
+            field=models.CharField(
+                max_length=200),
         ),
         migrations.AlterField(
             model_name='task',
             name='user',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL),
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                to=settings.AUTH_USER_MODEL),
         ),
     ]

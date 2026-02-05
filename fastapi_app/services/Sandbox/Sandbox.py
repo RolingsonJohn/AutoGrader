@@ -4,37 +4,44 @@ import logging
 from services.Config import Config as config
 from pathlib import Path
 
+
 class Sandbox:
 
-    def __init__(self, prog_lan : str = 'c', docker_host: str = config.DOCKER_HOST):
+    def __init__(
+            self,
+            prog_lan: str = 'c',
+            docker_host: str = config.DOCKER_HOST):
 
         self.client = docker.DockerClient(base_url=docker_host)
-                                          
+
         self.path = Path(__file__).resolve().parent
         self.prog_lan = prog_lan
         self.container = None
 
-
     def build_image(self, image: str = 'sandbox:1'):
-        
+
         if image not in self.client.images.list():
-            try: 
-                self.client.images.build(path=str(self.path), dockerfile=f"Dockerfile", tag=image)
+            try:
+                self.client.images.build(
+                    path=str(
+                        self.path),
+                    dockerfile=f"Dockerfile",
+                    tag=image)
             except docker.errors.BuildError as e:
                 logging.error(f"Error al construir la imagen: {e}")
                 return None
             except Exception as e:
                 logging.error(f"Error al construir la imagen: {e}")
                 return None
-            
+
         return image
-    
 
     def create_container(self, image: str = 'sandbox:1'):
         name = "sandbox_container"
         try:
             existing = self.client.containers.get(name)
-            logging.debug(f"Contenedor previo encontrado ({name}), eliminando...")
+            logging.debug(
+                f"Contenedor previo encontrado ({name}), eliminando...")
             existing.stop()
             existing.remove()
             logging.debug(f"Contenedor {name} eliminado.")
@@ -58,12 +65,13 @@ class Sandbox:
                 command="sleep infinity",
                 detach=True
             )
-            logging.debug(f"Contenedor {self.container.id} iniciado exitosamente.")
+            logging.debug(
+                f"Contenedor {
+                    self.container.id} iniciado exitosamente.")
             return self.container
         except Exception as e:
             logging.error(f"Error al iniciar el contenedor: {e}")
             return None
-    
 
     def run_container(self):
         if not self.container:
@@ -104,39 +112,51 @@ class Sandbox:
                     exe = f"/sandbox/{os.path.splitext(name)[0]}"
                     # Compilar
                     build_cmd = f"timeout {timeout_secs} gcc {src} -o {exe}"
-                    exit_code, output = self.container.exec_run(build_cmd, user='sandboxuser', workdir='/sandbox')
+                    exit_code, output = self.container.exec_run(
+                        build_cmd, user='sandboxuser', workdir='/sandbox')
 
                     print(exit_code, output)
                     if exit_code != 0:
-                        entry.update(exit_code=exit_code, error=output.decode().strip())
+                        entry.update(
+                            exit_code=exit_code,
+                            error=output.decode().strip())
                         results[name] = entry
                         continue
                     executables.append(exe)
                     # Ejecutar
                     run_cmd = f"timeout {timeout_secs} {exe}"
-                    exit_code, output = self.container.exec_run(run_cmd, user='sandboxuser', workdir='/sandbox')
-                    entry.update(exit_code=exit_code, output=output.decode().strip())
+                    exit_code, output = self.container.exec_run(
+                        run_cmd, user='sandboxuser', workdir='/sandbox')
+                    entry.update(
+                        exit_code=exit_code,
+                        output=output.decode().strip())
                 case 'python':
-                    exit_code, output = self.container.exec_run(f"timeout {timeout_secs} python3 -m py_compile {src}",
-                                               user='sandboxuser', workdir='/sandbox')
+                    exit_code, output = self.container.exec_run(
+                        f"timeout {timeout_secs} python3 -m py_compile {src}", user='sandboxuser', workdir='/sandbox')
                     if exit_code != 0:
-                        entry.update(exit_code=exit_code, error=output.decode().strip())
+                        entry.update(
+                            exit_code=exit_code,
+                            error=output.decode().strip())
                         results[name] = entry
                         continue
                     # Ejecutar
                     run_cmd = f"timeout {timeout_secs} python3 {src}"
-                    exit_code, output = self.container.exec_run(run_cmd, user='sandboxuser', workdir='/sandbox')
-                    entry.update(exit_code=exit_code, output=output.decode().strip())
+                    exit_code, output = self.container.exec_run(
+                        run_cmd, user='sandboxuser', workdir='/sandbox')
+                    entry.update(
+                        exit_code=exit_code,
+                        output=output.decode().strip())
                 case _:
                     raise Exception
-        
+
             results[name] = entry
 
         # Limpieza de ejecutables C
         if executables:
             safe = [p for p in executables if p.startswith('/sandbox/')]
             rm_cmd = "rm -f " + " ".join(safe)
-            self.container.exec_run(rm_cmd, user='sandboxuser', workdir='/sandbox')
+            self.container.exec_run(
+                rm_cmd, user='sandboxuser', workdir='/sandbox')
 
         logging.debug(f"run_container results: {results}")
         return results

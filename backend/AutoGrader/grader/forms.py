@@ -2,10 +2,16 @@
 from django import forms
 from .models import Task, LLMModel, LLMAgent, CodeExample
 
+
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ['theme', 'prog_lang', 'model', 'rubric_file', 'exercise_file']
+        fields = [
+            'theme',
+            'prog_lang',
+            'model',
+            'rubric_file',
+            'exercise_file']
 
         widgets = {
             'model': forms.Select(attrs={
@@ -20,6 +26,7 @@ class TaskForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+
 class CodeExampleForm(forms.ModelForm):
     # Campo para subir múltiples ficheros .py o .c
     files = forms.FileField(
@@ -33,6 +40,8 @@ class CodeExampleForm(forms.ModelForm):
         model = CodeExample
         fields = ['theme', 'prog_lang', 'files']
         widgets = {
-            'theme': forms.TextInput(attrs={'placeholder': 'Tema del ejercicio'}),
-            'prog_lang': forms.TextInput(attrs={'placeholder': 'Lenguaje (e.g. C, Python)'}),
-        }
+            'theme': forms.TextInput(
+                attrs={
+                    'placeholder': 'Tema del ejercicio'}), 'prog_lang': forms.TextInput(
+                attrs={
+                    'placeholder': 'Lenguaje (e.g. C, Python)'}), }

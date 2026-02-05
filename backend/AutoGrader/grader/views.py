@@ -20,7 +20,7 @@ from .forms import TaskForm, CodeExampleForm
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth.decorators import  login_required
+from django.contrib.auth.decorators import login_required
 
 # Configure logging
 logger = logging.getLogger(__name__)
@@ -28,30 +28,33 @@ logger = logging.getLogger(__name__)
 API_BASE = "http://localhost:8001"
 
 # Session with retry strategy for fault tolerance
+
+
 def get_api_session():
     """
     Create a requests session with retry strategy.
     Retries on connection errors and specific HTTP status codes.
     """
     session = requests.Session()
-    
+
     retry_strategy = Retry(
         total=3,
         backoff_factor=0.3,
         status_forcelist=[429, 500, 502, 503, 504],
         allowed_methods=["POST", "GET", "PUT", "DELETE"]
     )
-    
+
     adapter = HTTPAdapter(max_retries=retry_strategy)
     session.mount("http://", adapter)
     session.mount("https://", adapter)
-    
+
     return session
 
 
 @login_required
 def example_list(request):
-    examples = CodeExample.objects.filter(user=request.user).order_by('-created_at')
+    examples = CodeExample.objects.filter(
+        user=request.user).order_by('-created_at')
     return render(request, 'config/examples_list.html', {'examples': examples})
 
 
@@ -75,7 +78,10 @@ def create_code_example(request):
                     "theme": [example.theme],
                 }
                 try:
-                    requests.post(f"{API_BASE}/examples/populate", json=payload, timeout=5).raise_for_status()
+                    requests.post(
+                        f"{API_BASE}/examples/populate",
+                        json=payload,
+                        timeout=5).raise_for_status()
                 except Exception as e:
                     print("Error al notificar RAG:", e)
             return redirect('examples')
@@ -107,13 +113,18 @@ def example_detail(request, example_id):
         'files': files
     })
 
+
 @require_POST
 @login_required
 def delete_example(request, example_id):
     example = get_object_or_404(CodeExample, id=example_id, user=request.user)
     # notificar borrado al RAG
     try:
-        requests.post(f"{API_BASE}/examples/delete/", json={'title': example.theme}, timeout=5)
+        requests.post(
+            f"{API_BASE}/examples/delete/",
+            json={
+                'title': example.theme},
+            timeout=5)
     except Exception as e:
         print("Error notificando borrado RAG:", e)
     example.delete()
@@ -123,19 +134,18 @@ def delete_example(request, example_id):
 def load_agents(request):
     model_id = request.GET.get('model')
 
-    if str(model_id).strip() == '' or model_id == None:
+    if str(model_id).strip() == '' or model_id is None:
         return render(request, 'tasks/agents_options.html', {'agent': None})
     model = get_object_or_404(LLMModel, id=model_id)
     agent = model.agent
     return render(request, 'tasks/agents_options.html', {'agent': agent})
 
 
-
 @require_POST
 def delete_task(request, task_id):
     task = get_object_or_404(Task, id=task_id, user=request.user)
     task.delete()
-    return redirect('tasks') 
+    return redirect('tasks')
 
 
 @csrf_exempt
@@ -157,7 +167,7 @@ def mark_task_as_processed(request, task_id):
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
     except Exception as e:
         return JsonResponse({'error': 'Unknown Error'}, status=500)
-    
+
 
 @csrf_exempt
 def receive_task_error(request, task_id):
@@ -174,7 +184,7 @@ def receive_task_error(request, task_id):
         return JsonResponse({'error': 'Task not found'}, status=404)
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
-    
+
 
 def download_task_csv(request, task_id):
     try:
@@ -226,12 +236,13 @@ class SignUpView(generic.CreateView):
 
 class TaskTable(LoginRequiredMixin, generic.ListView):
     model = Task
-    #permission_required = 'grader.normal'
+    # permission_required = 'grader.normal'
     template_name = 'tasks/task_table.html'
     context_object_name = 'tasks'
 
     def get_queryset(self):
-        return Task.objects.filter(user=self.request.user).order_by('-created_at')
+        return Task.objects.filter(
+            user=self.request.user).order_by('-created_at')
 
 
 class TaskCreate(LoginRequiredMixin, generic.CreateView):
@@ -248,20 +259,29 @@ class TaskCreate(LoginRequiredMixin, generic.CreateView):
         form.instance.user = self.request.user
         task = form.save(commit=False)
         task.save()
-        
-        logger.info(f"Task {task.id} created: theme={task.theme}, lang={task.prog_lang}")
-        
+
+        logger.info(
+            f"Task {
+                task.id} created: theme={
+                task.theme}, lang={
+                task.prog_lang}")
+
         try:
             # Get Microsoft OAuth token
-            account = SocialAccount.objects.get(user=self.request.user, provider='microsoft')
+            account = SocialAccount.objects.get(
+                user=self.request.user, provider='microsoft')
             token = account.socialtoken_set.all().order_by('-expires_at').first()
-            
+
             if not token:
-                logger.warning(f"No token found for user {self.request.user.id}")
+                logger.warning(
+                    f"No token found for user {
+                        self.request.user.id}")
                 header = {"Authorization": "Bearer None"}
             else:
                 header = {"Authorization": f"Bearer {token.token}"}
-                logger.debug(f"Using token for user {self.request.user.username}")
+                logger.debug(
+                    f"Using token for user {
+                        self.request.user.username}")
         except Exception as e:
             logger.error(f"Error retrieving OAuth token: {str(e)}")
             header = {"Authorization": "Bearer None"}
@@ -271,24 +291,30 @@ class TaskCreate(LoginRequiredMixin, generic.CreateView):
             "task_id": task.id,
             "theme": task.theme,
             "prog_lang": task.prog_lang,
-            "model": task.model.name if hasattr(task.model, "name") else str(task.model),
-            "agent": task.model.agent.name if hasattr(task.model.agent, "name") else str(task.model.agent),
+            "model": task.model.name if hasattr(
+                task.model,
+                "name") else str(
+                task.model),
+            "agent": task.model.agent.name if hasattr(
+                task.model.agent,
+                "name") else str(
+                    task.model.agent),
             "api_key": task.model.agent.api_key,
         }
 
         # Prepare files with proper handling
         rubric_file = None
         exercise_file = None
-        
+
         try:
             # Open files in binary mode
             rubric_file = open(task.rubric_file.path, 'rb')
             exercise_file = open(task.exercise_file.path, 'rb')
-            
+
             # Seek to beginning to ensure full content
             rubric_file.seek(0)
             exercise_file.seek(0)
-            
+
             files = {
                 "rubrics_file": (
                     task.rubric_file.name,
@@ -304,8 +330,10 @@ class TaskCreate(LoginRequiredMixin, generic.CreateView):
 
             # Send request with retry strategy
             api_session = get_api_session()
-            
-            logger.info(f"Sending task {task.id} to FastAPI at {API_BASE}/evaluate")
+
+            logger.info(
+                f"Sending task {
+                    task.id} to FastAPI at {API_BASE}/evaluate")
             response = api_session.post(
                 f"{API_BASE}/evaluate",
                 headers=header,
@@ -314,24 +342,42 @@ class TaskCreate(LoginRequiredMixin, generic.CreateView):
                 timeout=60
             )
             response.raise_for_status()
-            
-            logger.info(f"Task {task.id} sent successfully. Response: {response.status_code}")
-            messages.success(self.request, f"Task {task.id} sent for evaluation!")
-            
+
+            logger.info(
+                f"Task {
+                    task.id} sent successfully. Response: {
+                    response.status_code}")
+            messages.success(
+                self.request, f"Task {
+                    task.id} sent for evaluation!")
+
         except requests.exceptions.Timeout:
             logger.error(f"Timeout sending task {task.id} to FastAPI")
             messages.error(self.request, "Request timeout. Please try again.")
         except requests.exceptions.ConnectionError as e:
             logger.error(f"Connection error sending task {task.id}: {str(e)}")
-            messages.error(self.request, "Could not connect to evaluation service.")
+            messages.error(
+                self.request,
+                "Could not connect to evaluation service.")
         except requests.exceptions.HTTPError as e:
-            logger.error(f"HTTP error {response.status_code} sending task {task.id}: {str(e)}")
-            messages.error(self.request, f"Evaluation service returned error: {response.status_code}")
+            logger.error(
+                f"HTTP error {
+                    response.status_code} sending task {
+                    task.id}: {
+                    str(e)}")
+            messages.error(
+                self.request,
+                f"Evaluation service returned error: {
+                    response.status_code}")
         except requests.exceptions.RequestException as e:
             logger.error(f"Request error sending task {task.id}: {str(e)}")
             messages.error(self.request, "Error sending task for evaluation.")
         except Exception as e:
-            logger.error(f"Unexpected error processing task {task.id}: {str(e)}", exc_info=True)
+            logger.error(
+                f"Unexpected error processing task {
+                    task.id}: {
+                    str(e)}",
+                exc_info=True)
             messages.error(self.request, "An unexpected error occurred.")
         finally:
             # Ensure files are closed
@@ -339,5 +385,5 @@ class TaskCreate(LoginRequiredMixin, generic.CreateView):
                 rubric_file.close()
             if exercise_file:
                 exercise_file.close()
-        
+
         return super().form_valid(form)

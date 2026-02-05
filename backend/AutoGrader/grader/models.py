@@ -9,12 +9,17 @@ from datetime import date
 class LLMAgent(models.Model):
     name = models.CharField(
         max_length=200, unique=True, help_text="", default="ollama")
-    
-    api_key = models.CharField(max_length=200, unique=False, null=True, blank=True, help_text="")
+
+    api_key = models.CharField(
+        max_length=200,
+        unique=False,
+        null=True,
+        blank=True,
+        help_text="")
 
     class Meta:
         ordering = ['name']
-    
+
     def __str__(self):
         return self.name
 
@@ -22,7 +27,11 @@ class LLMAgent(models.Model):
 class LLMModel(models.Model):
     name = models.CharField(
         max_length=200, unique=True, help_text="")
-    agent = models.ForeignKey(LLMAgent, default="ollama", on_delete=models.SET_DEFAULT, null=False)
+    agent = models.ForeignKey(
+        LLMAgent,
+        default="ollama",
+        on_delete=models.SET_DEFAULT,
+        null=False)
 
     class Meta:
         ordering = ['agent']
@@ -33,24 +42,24 @@ class LLMModel(models.Model):
 
 class Task(models.Model):
     STATUS_CHOICES = [
-        ('PENDING',   'En proceso'),
-        ('SUCCESS',   'Completado'),
-        ('ERROR',     'Error'),
+        ('PENDING', 'En proceso'),
+        ('SUCCESS', 'Completado'),
+        ('ERROR', 'Error'),
     ]
 
-    user           = models.ForeignKey(User, on_delete=models.CASCADE)
-    model          = models.ForeignKey(LLMModel, on_delete=models.SET_NULL, null=True)
-    prog_lang      = models.CharField(max_length=25, default='C')
-    theme          = models.CharField(max_length=200)
-    status         = models.CharField(
-                        max_length=10,
-                        choices=STATUS_CHOICES,
-                        default='PENDING'
-                      )
-    error_message  = models.TextField(null=True, blank=True)
-    rubric_file    = models.FileField(upload_to='rubrics/')
-    exercise_file  = models.FileField(upload_to='exercises/')
-    created_at     = models.DateTimeField(default=timezone.now)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    model = models.ForeignKey(LLMModel, on_delete=models.SET_NULL, null=True)
+    prog_lang = models.CharField(max_length=25, default='C')
+    theme = models.CharField(max_length=200)
+    status = models.CharField(
+        max_length=10,
+        choices=STATUS_CHOICES,
+        default='PENDING'
+    )
+    error_message = models.TextField(null=True, blank=True)
+    rubric_file = models.FileField(upload_to='rubrics/')
+    exercise_file = models.FileField(upload_to='exercises/')
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"Task {self.id} ({self.get_status_display()})"
@@ -74,13 +83,15 @@ class TaskResult(models.Model):
         ordering = ['created_at']
 
     def __str__(self):
-        return f"Result for Task {self.task_id} at {self.created_at.isoformat()}"
-    
+        return f"Result for Task {
+            self.task_id} at {
+            self.created_at.isoformat()}"
+
 
 class CodeExample(models.Model):
-    user       = models.ForeignKey(User, on_delete=models.CASCADE)
-    theme      = models.CharField(max_length=200)
-    prog_lang  = models.CharField(max_length=50)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    theme = models.CharField(max_length=200)
+    prog_lang = models.CharField(max_length=50)
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
@@ -93,9 +104,7 @@ class CodeExampleFile(models.Model):
         on_delete=models.CASCADE,
         related_name='files'
     )
-    file    = models.FileField(upload_to='examples/')
+    file = models.FileField(upload_to='examples/')
 
     def __str__(self):
         return f"{self.file.name}"
-
-
