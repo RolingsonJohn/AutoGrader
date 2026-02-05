@@ -1,10 +1,3 @@
-settings/
-venv/
-Fibonacci/
-subsets/
-subset/
-**/Config/config.ini
-**/settings.py
 __pycache__/
 
 # Environment variables and secrets
