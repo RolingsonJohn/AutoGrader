@@ -1,6 +1,22 @@
-# Grading Essays with LLMs
+# AutoGrader
 
 ![LogoAutoGrader](docs/logo.png)
+
+
+Este proyecto fue desarrollado como **Trabajo Fin de Grado (TFG) en Ingeniería Informática**.
+
+El objetivo principal fue diseñar e implementar un sistema distribuido para la evaluación automática de ejercicios de programación, explorando conceptos como:
+- Arquitectura de microservicios
+- Comunicación asíncrona mediante colas
+- Contenerización con Docker
+- Integración de servicios de IA
+
+[!NOTE]
+**Estado del proyecto**  
+Este proyecto se considera **finalizado** y **no se encuentra en mantenimiento activo**.  
+No se prevén ampliaciones, refactorizaciones ni nuevas publicaciones.
+
+El repositorio se mantiene público con fines **demostrativos y formativos**, como muestra del trabajo realizado y de las decisiones técnicas adoptadas durante su desarrollo.
 
 ## Índice
 
