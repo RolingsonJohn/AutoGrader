@@ -9,6 +9,7 @@ El objetivo principal fue diseñar e implementar un sistema distribuido para la 
 - Arquitectura de microservicios
 - Comunicación asíncrona mediante colas
 - Contenerización con Docker
+- Comunicación con servicios de Azure como OAuth y Mail.
 - Integración de servicios de IA
 
 [!NOTE]
