@@ -62,7 +62,7 @@ El repositorio se mantiene público con fines **demostrativos y formativos**, co
 - Clona el repositorio:
 ```
 git clone https://github.com/usuario/tfg-llm-autograder.git
-cd tfg-llm-autograder
+cd AutoGrader
 ```
 - Crea y activa un entorno virtual:
 ```
@@ -96,6 +96,11 @@ El script:
 - Ventana 1: `python manage.py runserver localhost:8000`
 - Ventana 2: `uvicorn main:app --reload --port 8001`
 - Ventana 3: `celery -A worker worker --loglevel=info --queues=evaluations`
+
+También es posible desplegar los servicios mediante el fichero `docker-compose.yaml`, simplemente ejecutando el comando:
+```
+docker compose up
+```
 
 ## Uso
 
