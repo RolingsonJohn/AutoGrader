@@ -65,7 +65,6 @@ class RagService:
         try:
             logger.info(f"Populating RAG for theme {self.theme}")
             # RAG population logic would go here
-            pass
         except Exception as e:
             logger.error(f"Error populating RAG: {str(e)}")
             raise
@@ -82,7 +81,6 @@ class RagService:
                 f"Deleting example {example_id} from RAG for theme {
                     self.theme}")
             # RAG deletion logic would go here
-            pass
         except Exception as e:
             logger.error(f"Error deleting example: {str(e)}")
             raise

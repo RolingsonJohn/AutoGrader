@@ -7,7 +7,7 @@ import asyncio
 import time
 import logging
 from enum import Enum
-from typing import Callable, Any, Optional, Type
+from typing import Callable, Any, Type
 from functools import wraps
 from http import HTTPStatus
 

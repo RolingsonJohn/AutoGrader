@@ -4,7 +4,6 @@ Provides centralized logging setup for all application components.
 """
 
 import logging
-import json
 import sys
 from datetime import datetime
 from pythonjsonlogger import jsonlogger

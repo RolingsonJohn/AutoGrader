@@ -3,8 +3,6 @@ Tests for utility functions and patterns.
 """
 
 import pytest
-import time
-import asyncio
 from services.utils import CircuitBreaker, retry_with_backoff, CircuitBreakerState
 
 

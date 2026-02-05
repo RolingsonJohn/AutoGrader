@@ -4,15 +4,11 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 import pandas as pd
-import io
-import zipfile
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse, HttpResponseNotAllowed, HttpResponse
-from allauth.socialaccount.models import SocialAccount, SocialToken
+from allauth.socialaccount.models import SocialAccount
 from django.views import generic
 from django.views.decorators.http import require_POST
 from .models import Task, LLMModel, TaskResult, CodeExample, CodeExampleFile
@@ -165,7 +161,7 @@ def mark_task_as_processed(request, task_id):
         return JsonResponse({'error': 'Task not found'}, status=404)
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
-    except Exception as e:
+    except Exception:
         return JsonResponse({'error': 'Unknown Error'}, status=500)
 
 

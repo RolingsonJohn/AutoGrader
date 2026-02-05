@@ -1,4 +1,3 @@
-import os
 import msal
 import requests
 import base64

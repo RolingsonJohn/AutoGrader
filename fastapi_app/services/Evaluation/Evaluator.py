@@ -3,10 +3,7 @@ from pydantic import BaseModel
 from services.Evaluation.LLMClient import LLMClient
 from threading import Lock, get_ident
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from pathlib import Path
-from ollama import Client
 from services.Config import Config as config
-import os
 import re
 import time
 
@@ -117,7 +114,7 @@ class Evaluator:
             response.update({"refine_grade": response_refine.get("grade")})
             response.update(
                 {"refine_feedback": response_refine.get("feedback")})
-        except Exception as e:
+        except Exception:
             response.update({"refine_grade": 0})
             response.update({"refine_feedback": 'NULL'})
 
@@ -180,7 +177,7 @@ class Evaluator:
             response.update({"refine_grade": response_refine.get("grade")})
             response.update(
                 {"refine_feedback": response_refine.get("feedback")})
-        except Exception as e:
+        except Exception:
             response.update({"refine_grade": 0})
             response.update({"refine_feedback": 'NULL'})
 
@@ -254,7 +251,7 @@ class Evaluator:
             response.update({"refine_grade": response_refine.get("grade")})
             response.update(
                 {"refine_feedback": response_refine.get("feedback")})
-        except Exception as e:
+        except Exception:
             response.update({"refine_grade": 0})
             response.update({"refine_feedback": 'NULL'})
 

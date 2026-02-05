@@ -1,8 +1,5 @@
 from pathlib import Path
-import logging
 import joblib
-from io import BytesIO
-from zipfile import ZipFile
 from services.PreEvaluation.FileLoader import FileLoader
 from services.Sandbox.Sandbox import Sandbox
 from services.Config.Config import CLF_MODEL, MAX_THREADS, ENDPOINT
@@ -10,7 +7,6 @@ from services.PreEvaluation.CodeClassifier import CodeClassifier
 from services.PreEvaluation.CodeCleanner import CodeCleanner
 from services.Evaluation.Evaluator import Evaluator
 from services.Evaluation.Rag import Rag
-from services.Evaluation.LLMClient import LLMClient
 from services.Evaluation.RubricGenerator import RubricGenerator
 from services.PostEvaluation.MailSender import MailSender
 

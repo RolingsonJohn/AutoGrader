@@ -8,11 +8,7 @@ FastAPI application with comprehensive improvements:
 - Testing: Full test coverage
 """
 
-import logging
 import ollama
-import requests
-from pathlib import Path
-from typing import Optional
 from datetime import datetime
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Header, BackgroundTasks, status
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,10 +19,10 @@ from worker import process_files_and_notify
 from services.Config.settings import Settings
 from services.logging_config import setup_logging
 from services.rag_service import RagService
-from services.utils import retry_with_backoff, HealthChecker
+from services.utils import retry_with_backoff
 from schemas import (
-    PopulateRagRequest, DeleteRagRequest, EvaluateRequest,
-    SuccessResponse, ErrorResponse, HealthCheckResponse
+    PopulateRagRequest, DeleteRagRequest, SuccessResponse,
+    HealthCheckResponse
 )
 
 settings = Settings()

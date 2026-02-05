@@ -1,7 +1,6 @@
 import os
 import re
 import json
-import ollama
 from pathlib import Path
 from services.Config import Config as config
 from pydantic import BaseModel

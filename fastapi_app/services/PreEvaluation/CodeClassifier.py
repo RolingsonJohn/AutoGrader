@@ -2,9 +2,7 @@ import math
 import numpy as np
 from services.Config import Config as config
 from torch import Tensor
-from collections import Counter
 import nltk
-from nltk.util import ngrams
 from nltk.tokenize import word_tokenize
 from sklearn.base import BaseEstimator
 from sklearn.feature_extraction.text import CountVectorizer

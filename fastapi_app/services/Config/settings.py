@@ -6,7 +6,6 @@ Provides centralized, validated configuration across the application.
 from pydantic_settings import BaseSettings
 from pydantic import Field, field_validator
 from typing import Optional
-import os
 from pathlib import Path
 
 

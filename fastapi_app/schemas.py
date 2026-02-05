@@ -3,7 +3,7 @@ Pydantic schemas for request/response validation.
 Provides type-safe API contracts with automatic validation and documentation.
 """
 
-from pydantic import BaseModel, Field, field_validator, HttpUrl
+from pydantic import BaseModel, Field, field_validator
 from typing import Optional, List, Dict, Any
 from datetime import datetime
 
