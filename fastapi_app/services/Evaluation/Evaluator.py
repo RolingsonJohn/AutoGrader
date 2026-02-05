@@ -190,7 +190,7 @@ class Evaluator:
                 data = re.sub("<ASPECT>", key, data)
                 data += "\n**MAKE SURE THAT THE NOTE YOU ASSIGNED RESPECT THE WEIGHT CRITERIA**"
 
-                data += f"\nThis is an example of a code grading with a 10\n{self.rubrics.get("Code")}"
+                data += f"\nThis is an example of a code grading with a 10\n{self.rubrics.get('Code')}"
                 
                 with mutex:
                     response = client.chat(structure=StudentsInfo, prompt=data)
