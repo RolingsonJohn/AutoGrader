@@ -1,0 +1,108 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "autograder"
+version = "2.0.0"
+description = "Automated code grading system with RAG and LLM integration"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "AutoGrader Team", email = "team@autograder.local"}
+]
+
+requires-python = ">=3.10"
+
+dependencies = [
+    "fastapi>=0.104.1",
+    "uvicorn>=0.24.0",
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    "python-dotenv>=1.0.0",
+    "python-json-logger>=2.0.0",
+    "ollama>=0.0.1",
+    "requests>=2.31.0",
+    "chromadb>=0.6.0",
+    "aiohttp>=3.9.0",
+    "celery>=5.3.0",
+    "redis>=5.0.0",
+    "Django>=5.0",
+    "django-allauth>=0.65.0",
+    "django-crispy-forms>=2.1",
+    "crispy-bootstrap4>=2024.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-asyncio>=0.21.0",
+    "black>=23.9.0",
+    "mypy>=1.5.0",
+    "flake8>=6.1.0",
+    "isort>=5.12.0",
+    "pre-commit>=3.4.0",
+]
+
+[project.urls]
+Repository = "https://github.com/yourusername/autograder"
+Documentation = "https://autograder.readthedocs.io"
+Issues = "https://github.com/yourusername/autograder/issues"
+
+[tool.pytest.ini_options]
+testpaths = ["fastapi_app/tests"]
+python_files = ["test_*.py"]
+asyncio_mode = "auto"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+]
+
+[tool.coverage.run]
+source = ["fastapi_app"]
+omit = [
+    "*/tests/*",
+    "*/__pycache__/*",
+    "*/site-packages/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "raise AssertionError",
+    "raise NotImplementedError",
+]
+
+[tool.black]
+line-length = 100
+target-version = ['py310', 'py311', 'py312']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+
+[tool.isort]
+profile = "black"
+line_length = 100
+skip_gitignore = true

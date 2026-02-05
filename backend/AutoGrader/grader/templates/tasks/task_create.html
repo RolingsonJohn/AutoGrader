@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}
+<title>Create Task</title>
+{% endblock %}
+
+{% block content %}
+<h1>Creación de la Tarea</h1>
+
+<div id="submit-status" style="padding: 10px; margin-bottom: 10px;"></div>
+
+<form method="POST" enctype="multipart/form-data" id="main-form">
+    {% csrf_token %}
+    <div class="task-container">
+
+        <div class="data-content">
+            <p>
+                Uso de Configuración del perfil:<br>
+                {{ form.config }}
+            </p>
+
+            <p>
+                Temática del ejercicio:<br>
+                {{ form.theme }}
+            </p>
+
+            <p>
+                Lenguaje de programación:<br>
+                {{ form.prog_lang }}
+            </p>
+
+            <p>
+                Modelo LLM:<br>
+                {{ form.model }}
+            </p>
+
+            <p id="agent-field">
+                <label for="id_agent">Agente:</label><br>
+                <input type="text" id="agent_display" value="{{ agent.name|escape }}" readonly>
+                {{ form.agent }}
+            </p>
+        </div>
+
+        <div class="rubric-content">
+            <h3>Rúbricas</h3>
+            <div class="dropzone" id="rubric-dropzone">
+                <p>Arrastra el archivo JSON aquí o haz clic para seleccionarlo</p>
+                {{ form.rubric_file }}
+            </div>
+        </div>
+
+        <div class="files-content">
+            <h3>Ficheros a Evaluar</h3>
+            <div class="dropzone" id="exercise-dropzone">
+                <p>Arrastra los archivos aquí o haz clic para seleccionarlos</p>
+                {{ form.exercise_file }}
+            </div>
+        </div>
+    </div>
+
+    <button class="GenericButton" type="submit">Crear tarea</button>
+</form>
+
+<script>
+    document.getElementById('main-form').addEventListener('submit', function (e) {
+        console.log('Form submit clicked!');
+        document.getElementById('submit-status').innerHTML = '<p style="color:blue;">Enviando formulario...</p>';
+
+        // Log form data
+        const formData = new FormData(this);
+        console.log('Form fields:');
+        for (let [key, value] of formData.entries()) {
+            console.log(`  ${key}: ${value instanceof File ? value.name : value}`);
+        }
+    });
+
+    // Log when theme changes
+    const themeField = document.querySelector('[name="theme"]');
+    if (themeField) {
+        themeField.addEventListener('change', function () {
+            console.log('Theme changed to:', this.value);
+        });
+    }
+</script>
+{% endblock %}

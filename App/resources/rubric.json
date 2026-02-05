@@ -1,0 +1,11 @@
+{
+    "Functionality" : 
+    { 
+        "criterio" : ["Grade the functionality of this c code in a range [0.0-10.0]. This code must represent the Fibonacci's sequence."],
+        "peso" : 5.0
+    },
+    "Quality" : { 
+        "criterio" : ["Grade the quality of this c code in a range [0.0-10.0]. This code must represent the Fibonacci's sequence. Do not pay attention to the comments."],
+        "peso" : 5.0
+    }
+}

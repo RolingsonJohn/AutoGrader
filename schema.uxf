@@ -1,0 +1,98 @@
+<diagram program="umletino" version="15.1"><zoom_level>6</zoom_level><help_text>Space for diagram notes</help_text><element><id>UMLClass</id><coordinates><x>210</x><y>366</y><w>228</w><h>48</h></coordinates><panel_attributes>CodeCleanner
+--
+
+--
++ remove_comments(code: str, language: str): -&gt; str</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>876</x><y>318</y><w>288</w><h>156</h></coordinates><panel_attributes>Evaluator
+--
+- codes: list(str)
+- language: str
+- format: str
+- model: str
+- feedback: dict
+- results: list
+- max_threads: int
+- prompt_template: str
+--
++ zero_shot_prompt(filename:str, code: str): -&gt; dict
++ cot_prompt(filename:str, code: str): -&gt; dict
++ few_shots_prompt(filename:str, code: str, query: str) -&gt; dict
++ cot_few_shots_prompt(filename:str, code: str, query: str) -&gt; dict
++ launch_threads() -&gt; dict</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>228</x><y>216</y><w>300</w><h>78</h></coordinates><panel_attributes>Rag
+--
+- client: PersistenClient
+- collection: Collection
+--
++ add_example(title: str, description: str, code: str, theme: str, embedding: ndarray):
++ delete_example(title: str):
++ delete_collection(name: str):
++ get_examples(query: str, relatives: int): -&gt; str</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>1212</x><y>378</y><w>108</w><h>48</h></coordinates><panel_attributes>StudentsInfo
+--
+name: str
+grade: float
+error_feedback: str</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>1158</x><y>396</y><w>66</w><h>24</h></coordinates><panel_attributes>m2=structure</panel_attributes><additional_attributes>10;10;90;10</additional_attributes></element><element><id>Relation</id><coordinates><x>426</x><y>288</y><w>234</w><h>132</h></coordinates><panel_attributes>m2=rag</panel_attributes><additional_attributes>370;200;370;40;10;40;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>216</x><y>552</y><w>222</w><h>120</h></coordinates><panel_attributes>CodeClassifier
+--
+- classifier: BaseEstimator
+- transformer: SentenceTransformer
+- vectorizer: CountVectorizer
+--
++ get_embedding(code: str) -&gt; Tensor:
++ get_n_gram_embedding(code: str) -&gt; ndarray:
++ fit_ngram_vocab(codes: list(str)):
++ euclidean_distance(ref1: Tensor, ref2: Tensor) -&gt; float:
++ manhattan_distance(ref1, ref2) -&gt; float:
++ dot_product_similitude(ref1, ref2) -&gt; float:
++ cosine_similitude(ref1, ref2) -&gt; float:</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>552</x><y>570</y><w>192</w><h>96</h></coordinates><panel_attributes>Sandbox
+--
+- client: DockerClient
+- path: str
+- prog_language: str
+--
++ build_image(image: str) -&gt; str:
++ create_container(image: str) -&gt; Container:
++ run_container(container: Container):
++ stop_container(container: Container):
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>876</x><y>498</y><w>288</w><h>84</h></coordinates><panel_attributes>MailSender
+--
+- endpoint: str
+- token: str
+--
++ send_mail(subject: str, body: str, attch: list, to_email: str)
++ create_attachment(data: str, attch_name: str) -&gt; dict
++ authenticate() -&gt; str</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>552</x><y>408</y><w>210</w><h>114</h></coordinates><panel_attributes>System
+--
+
+--
++ generate_evaluation(theme: str, prog_lang: str, 
+                         model_name: str, agent: str, api_key: str,
+                         token: str, zip_path: Path, rubric_path: Path):
++ generate_feedback_files():</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>642</x><y>516</y><w>48</w><h>66</h></coordinates><panel_attributes>m2=sandbox</panel_attributes><additional_attributes>10;10;10;90</additional_attributes></element><element><id>Relation</id><coordinates><x>756</x><y>468</y><w>132</w><h>72</h></coordinates><panel_attributes>m2=sender</panel_attributes><additional_attributes>10;10;120;10;120;90;200;90</additional_attributes></element><element><id>Relation</id><coordinates><x>822</x><y>426</y><w>66</w><h>60</h></coordinates><panel_attributes>m2=evaluator</panel_attributes><additional_attributes>10;80;10;10;90;10</additional_attributes></element><element><id>Relation</id><coordinates><x>432</x><y>480</y><w>132</w><h>126</h></coordinates><panel_attributes>m2=classifier</panel_attributes><additional_attributes>200;10;120;10;120;180;10;180</additional_attributes></element><element><id>Relation</id><coordinates><x>432</x><y>372</y><w>84</w><h>126</h></coordinates><panel_attributes>m2=cleaner</panel_attributes><additional_attributes>120;190;120;10;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>540</x><y>216</y><w>198</w><h>84</h></coordinates><panel_attributes>RubricGenerator
+--
+- rubric_path: str
+- client: LLMClient
+--
++ get_rubric(theme: str) -&gt; dict:
++ generate_rubric(context: str): -&gt; dict
++ load_rubric(): -&gt; dict</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>642</x><y>294</y><w>72</w><h>30</h></coordinates><panel_attributes>m2=rubric_generator</panel_attributes><additional_attributes>10;30;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>540</x><y>126</y><w>198</w><h>60</h></coordinates><panel_attributes>RubricFormat
+--
+Functionality: Dimension
+Quality: Dimension
+Efficiency: Dimension
+Resources: Dimension</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>636</x><y>180</y><w>48</w><h>48</h></coordinates><panel_attributes>m2=structure</panel_attributes><additional_attributes>10;60;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>792</x><y>216</y><w>210</w><h>66</h></coordinates><panel_attributes>LLMClient
+--
+- model: str
+- execution_mode: str
+- system_context: str
+--
++ chat(prompt:str, structure: BaseModel, prompt: str) -&gt; dict</panel_attributes><additional_attributes></additional_attributes></element><element><id>UMLClass</id><coordinates><x>576</x><y>66</y><w>114</w><h>36</h></coordinates><panel_attributes>Dimension
+--
+Criteria: list[str]
+Weight: float
+</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>630</x><y>96</y><w>48</w><h>42</h></coordinates><panel_attributes>m2=structure</panel_attributes><additional_attributes>10;50;10;10</additional_attributes></element><element><id>UMLClass</id><coordinates><x>246</x><y>444</y><w>192</w><h>84</h></coordinates><panel_attributes>FileLoader
+--
+
+--
++ load_file(path: str):-&gt; str
++ load_files_from_dir(path: str) -&gt; dict
++ extract_files(path: str): -&gt; dict
++ replace_tags(template: str, tags: str): -&gt; str
++ write_files(path: str, data:str):</panel_attributes><additional_attributes></additional_attributes></element><element><id>Relation</id><coordinates><x>432</x><y>480</y><w>84</w><h>24</h></coordinates><panel_attributes>m2=file_loader</panel_attributes><additional_attributes>120;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>996</x><y>228</y><w>60</w><h>102</h></coordinates><panel_attributes>m2=        client</panel_attributes><additional_attributes>50;150;50;10;10;10</additional_attributes></element><element><id>Relation</id><coordinates><x>732</x><y>228</y><w>72</w><h>24</h></coordinates><panel_attributes>m2=client</panel_attributes><additional_attributes>10;10;100;10</additional_attributes></element></diagram>

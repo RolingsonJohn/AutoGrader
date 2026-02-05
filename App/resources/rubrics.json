@@ -1,0 +1,37 @@
+{
+    "Functionality": {
+        "criteria": [
+            "The algorithm correctly calculates the nth Fibonacci number.",
+            "The function handles edge cases (e.g., n = 0, n = 1) correctly."
+        ],
+        "weight": 4.0
+    },
+    "Quality": {
+        "criteria": [
+            "Code is well-structured and easy to read.",
+            "Variable names are descriptive and follow a consistent naming convention.",
+            "Comments are provided to explain the purpose of each function or section of code."
+        ],
+        "weight": 3.0
+    },
+    "Efficiency": {
+        "criteria": [
+            "The algorithm has an optimal time complexity (O(n)) for calculating Fibonacci numbers.",
+            "Proper use of memoization or dynamic programming is implemented, if applicable."
+        ],
+        "weight": 2.0
+    },
+    "Logic": {
+        "criteria": [
+            "Code follows best practices for error handling and input validation.",
+            "Memory management is proper and does not lead to memory leaks."
+        ],
+        "weight": 1.0
+    },
+    "Resources": {
+        "criteria": [
+            "The code uses system resources efficiently, such as file I/O and memory allocation."
+        ],
+        "weight": 0.5
+    }
+}

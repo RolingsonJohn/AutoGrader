@@ -1,0 +1,57 @@
+settings/
+venv/
+Fibonacci/
+subsets/
+subset/
+**/Config/config.ini
+**/settings.py
+__pycache__/
+
+# Environment variables and secrets
+.env
+.env.local
+.env.*.local
+.env.example
+
+# Configuration files with sensitive data
+**/config.ini
+**/secrets.json
+**/secrets.yaml
+*.key
+*.pem
+*.crt
+
+# IDE and OS
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Database
+db.sqlite3
+*.db
+*.sqlite
+
+# Logs
+*.log
+logs/
+
+# Django
+local_settings.py
+/staticfiles/
+/media/
+
+# Python
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.coverage
+
+# API Keys and tokens (in case they slip through)
+token.txt
+api_key.txt
