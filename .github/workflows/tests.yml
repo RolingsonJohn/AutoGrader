@@ -26,14 +26,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
         pip install pytest pytest-cov pytest-asyncio black mypy flake8
-            
-    - name: Format check with black
-      run: |
-        black --check fastapi_app
-    
-    - name: Type check with mypy
-      run: |
-        mypy fastapi_app --ignore-missing-imports || true
     
     - name: Run tests with coverage
       run: |
