@@ -47,8 +47,7 @@ def process_files(
         logger.info(f"Evaluation complete. Results: {len(results)}")
     except Exception as e:
         logger.error(
-            f"Error en la evaluación de los ficheros: {
-                str(e)}", exc_info=True)
+            f"Error en la evaluación de los ficheros: {str(e)}", exc_info=True)         
         print(f"Error en la evaluación de los ficheros {e}")
         return None
 
@@ -58,8 +57,7 @@ def process_files(
         logger.info("Post-evaluation complete")
     except Exception as e:
         logger.error(
-            f"Error en la emisión del feedback a estudiantes: {
-                str(e)}", exc_info=True)
+            f"Error en la emisión del feedback a estudiantes: {str(e)}", exc_info=True)         
         print(f"Error en la emisión del feedback a estudiantes {e}")
 
     return results

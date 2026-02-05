@@ -25,7 +25,7 @@ class Sandbox:
                 self.client.images.build(
                     path=str(
                         self.path),
-                    dockerfile=f"Dockerfile",
+                    dockerfile="Dockerfile",
                     tag=image)
             except docker.errors.BuildError as e:
                 logging.error(f"Error al construir la imagen: {e}")
@@ -66,8 +66,7 @@ class Sandbox:
                 detach=True
             )
             logging.debug(
-                f"Contenedor {
-                    self.container.id} iniciado exitosamente.")
+                f"Contenedor {self.container.id} iniciado exitosamente.")            
             return self.container
         except Exception as e:
             logging.error(f"Error al iniciar el contenedor: {e}")

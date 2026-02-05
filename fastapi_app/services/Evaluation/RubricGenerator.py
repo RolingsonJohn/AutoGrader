@@ -29,9 +29,7 @@ class RubricGenerator:
         self.client = LLMClient(
             exe_mode=exe_mode,
             system_context=system_config)
-        self.rubric_path = f"{
-            Path(__file__).parent.parent}/resources/rubrics.json"
-
+        self.rubric_path = f"{Path(__file__).parent.parent}/resources/rubrics.json" 
     def get_rubric(self, theme: str) -> dict:
 
         if os.path.exists(

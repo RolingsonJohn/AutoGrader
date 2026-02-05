@@ -1,12 +1,16 @@
+import os
 from celery import Celery
 import requests
 from services.processing import process_files
 from pathlib import Path
 
+REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+DJANGO_URL = os.getenv("DJANGO_URL", "http://localhost:8000")
+
 celery_app = Celery(
     "worker",
-    broker="redis://localhost:6379/0",  # o la URL de tu instancia Redis
-    backend="redis://localhost:6379/0"
+    broker=REDIS_URL,
+    backend=REDIS_URL,
 )
 
 celery_app.conf.task_routes = {
@@ -58,14 +62,13 @@ def process_files_and_notify(
             # Send error notification
             error_payload = {"error": error_message}
             response = requests.post(
-                f"http://localhost:8000/autograder/task/{task_id}/error/",
+                f"{DJANGO_URL}/autograder/task/{task_id}/error/",
                 json=error_payload,
                 timeout=5
             )
             response.raise_for_status()
             print(
-                f"Tarea {task_id} marcada como error: {
-                    response.status_code}")
+                f"Tarea {task_id} marcada como error: {response.status_code}")         
         else:
             # Send success with results
             payload = {
@@ -73,13 +76,12 @@ def process_files_and_notify(
                 "result": result
             }
             response = requests.post(
-                f"http://localhost:8000/autograder/task/{task_id}/results/",
+                f"{DJANGO_URL}/autograder/task/{task_id}/results/",
                 json=payload,
                 timeout=10
             )
             response.raise_for_status()
             print(
-                f"Tarea {task_id} marcada como procesada: {
-                    response.status_code}")
+                f"Tarea {task_id} marcada como procesada: {response.status_code}")     
     except Exception as notify_err:
         print(f"Error notificando a Django: {notify_err}")

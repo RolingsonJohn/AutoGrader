@@ -44,7 +44,7 @@ class System:
         # --- Carga de datos ---
         clf_model = joblib.load(CLF_MODEL)
         files = FileLoader.files_extraction(str(self.data_file), "data")
-        ref = FileLoader.load_files(path=f"data/pruebas/good.c")
+        ref = FileLoader.load_files(path="data/pruebas/good.c")
 
         return (clf_model, files, ref)
 

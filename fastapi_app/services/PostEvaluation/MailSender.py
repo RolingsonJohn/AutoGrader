@@ -27,9 +27,7 @@ class MailSender:
             self.token = result['access_token']
         else:
             raise Exception(
-                f"No se pudo obtener el token: {
-                    result.get('error_description')}")
-
+                f"No se pudo obtener el token: {result.get('error_description')}") 
     def create_attachment(self, data: str, attch_name: str) -> dict:
 
         encoded_data = base64.b64encode(data.encode('utf-8')).decode('utf-8')

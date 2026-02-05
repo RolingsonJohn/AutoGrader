@@ -148,7 +148,14 @@ The response must follow the JSON schema bellow:
                         "Execution mode non suported during chat")
 
         except Exception as e:
-            print(f"LLM error {e}")
+            import traceback
+            print("LLM error:", e)
+            traceback.print_exc()
+            # Helpful debug output: show truncated prompt and mode
+            try:
+                print(f"Mode={self.exe_mode} Model={getattr(self, 'model', None)} Prompt_len={len(prompt)}")
+            except Exception:
+                pass
             return None
 
         return response

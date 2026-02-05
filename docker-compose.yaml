@@ -1,5 +1,3 @@
-version: '3.9'
-
 services:
   ollama:
     image: ollama/ollama
@@ -7,18 +5,48 @@ services:
       - "11435:11434"
     volumes:
       - ollama_data:/root/.ollama
-    restart: always
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
 
   fastapi:
     build:
-      context: .
+      context: ./fastapi_app
     ports:
       - "5000:5000"
     depends_on:
+      - redis
       - ollama
     environment:
       - OLLAMA_HOST=http://ollama:11434
-    restart: always
+      - REDIS_URL=redis://redis:6379/0
+      - DJANGO_URL=http://django:8000
+
+  celery:
+    build:
+      context: ./fastapi_app
+    command: celery -A worker worker --loglevel=info --queues=evaluations
+    depends_on:
+      - redis
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - REDIS_URL=redis://redis:6379/0
+      - DJANGO_URL=http://django:8000
+
+  django:
+    build:
+      context: ./backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+      - ollama
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+      - FASTAPI_URL=http://fastapi:5000
+      - REDIS_URL=redis://redis:6379/0
 
 volumes:
   ollama_data:

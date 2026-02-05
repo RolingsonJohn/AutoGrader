@@ -103,6 +103,9 @@ class Evaluator:
             if self.exe_mode != 'ollama':
                 time.sleep(5)
 
+        if response is None:
+            raise Exception(f"LLM client returned None for zero_shot_prompt (file={filename})")
+
         response_refine = self.deep_thinking(
             client,
             filename,
@@ -165,6 +168,9 @@ class Evaluator:
             response = client.chat(structure=StudentsInfo, prompt=data)
             if self.exe_mode != 'ollama':
                 time.sleep(5)
+
+        if response is None:
+            raise Exception(f"LLM client returned None for few_shots_prompt (file={filename})")
 
         response_refine = self.deep_thinking(
             client,
@@ -230,9 +236,7 @@ class Evaluator:
 
                 feedbacks.update({key: feedback})
                 prompt += f"\n# Feedback for {key}\n{feedback}"
-                # prompt += f"\n## Grade for {key} =
-                # {response.get("grade")}/{rubric.get("weight")}"
-
+                # prompt += f"\n## Grade for {key} =                 # {response.get("grade")}/{rubric.get("weight")}" 
                 print(f"Hilo Evaluando: {get_ident()}\nPrompt = \n{data}\n\n")
         print(f"Fichero {filename}, notas = {grades}")
 
@@ -307,6 +311,9 @@ class Evaluator:
         with mutex:
             response = client.chat(structure=StudentsInfo, prompt=prompt)
 
+        if response is None:
+            raise Exception(f"LLM client returned None for deep_thinking (file={filename})")
+
         # print(f"Reevaluación {response.get("grade")}")
         response.update({"name": filename})
         return response
@@ -329,6 +336,7 @@ class Evaluator:
                     filename,
                     code) for filename,
                 code in self.codes.items()}
+            print("\n\n\nHASTA AQUI LLEGO\n\n\n")
             for future in as_completed(futures):
                 result = future.result()
                 self.results.append({

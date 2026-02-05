@@ -313,9 +313,9 @@ async def delete_example(request: DeleteRagRequest):
         rag_service.delete_example(str(request.task_id))
 
         logger.info(
-            f"Example {
+            f"""Example {
                 request.task_id} deleted from theme {
-                request.theme}")
+                request.theme}""")
         return SuccessResponse(
             message=f"Example {request.task_id} deleted successfully",
             data={"task_id": request.task_id, "theme": request.theme}

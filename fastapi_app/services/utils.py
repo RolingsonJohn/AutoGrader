@@ -77,9 +77,7 @@ class CircuitBreaker:
             if self.failure_count >= self.failure_threshold:
                 self.state = CircuitBreakerState.OPEN
                 logger.error(
-                    f"Circuit breaker opened after {
-                        self.failure_count} failures")
-
+                    f"Circuit breaker opened after {self.failure_count} failures") 
             raise
 
 
@@ -108,8 +106,7 @@ def retry_with_backoff(
                 except exceptions as e:
                     if attempt == max_retries - 1:
                         logger.error(
-                            f"Function {
-                                func.__name__} failed after {max_retries} attempts")
+                            f"Function {func.__name__} failed after {max_retries} attempts")                        
                         raise
 
                     delay = backoff_factor * (2 ** attempt)
@@ -127,8 +124,7 @@ def retry_with_backoff(
                 except exceptions as e:
                     if attempt == max_retries - 1:
                         logger.error(
-                            f"Function {
-                                func.__name__} failed after {max_retries} attempts")
+                            f"Function {func.__name__} failed after {max_retries} attempts")                        
                         raise
 
                     delay = backoff_factor * (2 ** attempt)

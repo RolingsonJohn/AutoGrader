@@ -1,4 +1,5 @@
 import json
+import os
 import logging
 import requests
 from requests.adapters import HTTPAdapter
@@ -21,7 +22,7 @@ from django.contrib.auth.decorators import login_required
 # Configure logging
 logger = logging.getLogger(__name__)
 
-API_BASE = "http://localhost:8001"
+API_BASE = os.getenv("FASTAPI_URL", "http://localhost:8000")
 
 # Session with retry strategy for fault tolerance
 
